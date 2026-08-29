@@ -1,66 +1,236 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🖤</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
+<title>Vive l'hiver</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    width:100%;
+    height:100vh;
+    overflow:hidden;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial, sans-serif;
+}
+
+/* اللافتة */
+.sign{
+    position:relative;
+    width:88%;
+    max-width:700px;
+    min-height:190px;
+
+    background:
+    linear-gradient(145deg,#111,#050505);
+
+    border:2px solid #333;
+    border-radius:8px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:
+        0 0 25px rgba(255,255,255,.08),
+        inset 0 0 30px rgba(255,255,255,.03);
+
+    overflow:hidden;
+
+    animation:appear 1.5s ease;
+}
+
+/* الثلج فوق اللافتة */
+.snow{
+    position:absolute;
+    top:-30px;
+    left:0;
+    width:100%;
+    height:calc(100% + 60px);
+    pointer-events:none;
+    z-index:5;
+}
+
+/* العبارة */
+.text{
+    position:relative;
+    z-index:3;
+
+    color:white;
+
+    font-size:clamp(35px,8vw,75px);
+
+    font-weight:900;
+
+    letter-spacing:3px;
+
+    text-align:center;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,.5),
+        0 0 20px rgba(180,220,255,.3);
+
+    animation:textAppear 2s ease;
+}
+
+/* حركة ظهور اللافتة */
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:scale(.85);
     }
-
-    body {
-      margin: 0;
-      background-image: url('8b95ecf1bc23de44e274b6284d5e4ba6.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+    to{
+        opacity:1;
+        transform:scale(1);
     }
+}
 
-    .message {
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-      font-size: 24px;
-      line-height: 1.8;
-      font-weight: 500;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(3px);
-
-      opacity: 0;
-      animation: appear 2s ease forwards;
-      animation-delay: 1s;
+/* ظهور الكتابة */
+@keyframes textAppear{
+    from{
+        opacity:0;
+        transform:translateY(15px);
     }
-
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <div class="message">
-"اللهم اجبر قلبي جبرًا يليق بكرمك، وبدّل كل ما أتعبني راحة، وكل ما أحزنني فرحًا." 🍃🤲
-  </div>
+<div class="sign">
+
+    <canvas class="snow"></canvas>
+
+    <div class="text">
+        VIVE L’HIVER ❄️💪🏼
+    </div>
+
+</div>
+
+
+<script>
+
+const canvas = document.querySelector(".snow");
+const ctx = canvas.getContext("2d");
+
+let snowflakes = [];
+
+function resizeCanvas(){
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+/* إنشاء الثلج */
+
+for(let i = 0; i < 100; i++){
+
+    snowflakes.push({
+
+        x: Math.random() * canvas.width,
+
+        y: Math.random() * canvas.height,
+
+        radius: Math.random() * 3 + 1,
+
+        speed: Math.random() * 1.5 + .5,
+
+        wind: Math.random() * .8 - .4,
+
+        opacity: Math.random() * .8 + .2
+
+    });
+
+}
+
+
+/* رسم الثلج */
+
+function drawSnow(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    snowflakes.forEach(flake => {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            flake.x,
+            flake.y,
+            flake.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(255,255,255,${flake.opacity})`;
+
+        ctx.fill();
+
+
+        flake.y += flake.speed;
+
+        flake.x += flake.wind;
+
+
+        /* يرجع الثلج من الفوق */
+
+        if(flake.y > canvas.height + 10){
+
+            flake.y = -10;
+
+            flake.x =
+                Math.random() * canvas.width;
+
+        }
+
+
+        if(flake.x > canvas.width){
+
+            flake.x = 0;
+
+        }
+
+        if(flake.x < 0){
+
+            flake.x = canvas.width;
+
+        }
+
+    });
+
+    requestAnimationFrame(drawSnow);
+
+}
+
+drawSnow();
+
+</script>
 
 </body>
-</html>
+  </html>
